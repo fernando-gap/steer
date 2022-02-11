@@ -1,0 +1,7 @@
+{
+    "scopes": "https://www.googleapis.com/auth/scopes",
+    "redirect_uri": "http://localhost:port",
+    "response_type": "code",
+    "client_id": "your_client_id"
+}
+
