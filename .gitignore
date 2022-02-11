@@ -1,0 +1,8 @@
+# remove python byte-code
+*.pyc
+
+# remove TODO
+TODO
+
+# igore project rules
+guidelines
