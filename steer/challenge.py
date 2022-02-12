@@ -1,5 +1,5 @@
 from hashlib import sha256
-from base64 import standard_b64encode, urlsafe_b64encode
+from base64 import urlsafe_b64encode
 from string import ascii_letters, digits
 from secrets import choice
 
@@ -37,10 +37,9 @@ class S256(IMethod):
         hash256 = sha256()
         hash256.update(bytes(randstr, 'ascii'))
 
-        b64 = standard_b64encode(hash256.digest())
-        b64url = urlsafe_b64encode(b64)
+        b64 = urlsafe_b64encode(hash256.digest())
+        self.code_challenge = b64.decode('utf-8').removesuffix('=')
 
-        self.code_challenge = b64url.decode('utf-8')
         return  self.codestr + self.code_challenge + self.codemethod
 
 
