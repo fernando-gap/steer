@@ -1,5 +1,5 @@
 from json import loads, JSONDecodeError
-
+import webbrowser as browser
 
 class ParseParams:
 
@@ -45,7 +45,22 @@ class OAuth2(ParseParams):
 
     def create(self, challenge = None):
         """ Creates google authentication request """
-        if challenge is None: 
-            return self._oauth_url + self.uri
 
-        return self._oauth_url + self.uri + challenge.method()
+        if challenge is None: 
+            self.oauthurl = self._oauth_url + self.uri 
+            return self.oauthurl
+
+
+        self.oauthurl = self._oauth_url + self.uri + challenge.method()
+        return self.oauthurl
+
+
+    def open(self):
+        """Open the oauth url on user's default browser"""
+        try:
+            browser.open(self.oauthurl)
+
+        except browser.Error:
+            print('browser error')
+    
+
