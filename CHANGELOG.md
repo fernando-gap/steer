@@ -21,7 +21,12 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 
 ## [0.2.1] - 2022-02-21
 ### Removed
-- Useless encription on class S256, the hash256 was being encripted twice with Base64 encode
+- Useless encryption on class S256, the hash256 was being encrypted twice with Base64 encode
 
 ### Changed
 - Base64url was adding a trailing equals "=" in code challenge that was causing an encode error
+
+
+## [0.3.0] - 2022-02-21
+### Added
+- The OAuth2 authorization can be opened on the default browser
