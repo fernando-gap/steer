@@ -8,3 +8,12 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 ### Added
 - New class OAuth2 to create the URI for Google's OAuth 2.0 Server
 
+## [0.1.1] - 2022-02-21
+### Removed
+- Comments and variables in improper places
+
+
+## [0.2.0] - 2022-02-21
+### added
+- Google api code challenge generator
+

@@ -1,11 +1,48 @@
+from hashlib import sha256
+from base64 import standard_b64encode, urlsafe_b64encode
+from string import ascii_letters, digits
+from secrets import choice
+
 class IMethod:
-
-    __CODE_CHALLENGE_METHOD = '&code_challenge_method='
-
     def method(self):
         raise NotImplemented
 
+    def get_method(self):
+        raise NotImplemented
 
-class S256(Icode):
+
+class S256(IMethod):
+
+    def __init__(self):
+        self.codestr = '&code_challenge='
+        self.codemethod = '&code_challenge_method=S256'
+
+
+    @classmethod
+    def randstring(cls):
+        """Create a ramdom string of 128 digits"""
+
+        chars = ascii_letters.join(digits).join(['-', '.', '_', '~'])
+        chars_list = [letter for letter in chars]
+        chars_list.sort()
+
+        entropy = ''.join(choice(chars_list) for i in range(128))
+        return entropy
+
+
     def method(self):
-        pass
+        """Implements method S256"""
+
+        randstr = S256.randstring()
+        hash256 = sha256()
+        hash256.update(bytes(randstr, 'ascii'))
+
+        b64 = standard_b64encode(hash256.digest())
+        b64url = urlsafe_b64encode(b64)
+
+        self.code_challenge = b64url.decode('utf-8')
+        return  self.codestr + self.code_challenge + self.codemethod
+
+
+    def get_method(self):
+        return self.code_challenge
