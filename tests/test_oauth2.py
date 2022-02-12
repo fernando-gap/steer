@@ -76,16 +76,16 @@ class TestParseParams(ut.TestCase):
 
 
 
-class TestOAuth2:
+class TestOAuth2(ut.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        oauth2 = OAuth2(json='test_data/data.json')
+        cls.oauth2 = OAuth2(json='test_data/data.json')
 
     def test_create(self):
         want = "https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/scopes&redirect_uri=http://localhost:port&response_type=code&client_id=your_client_id"
 
-        self.assertEqual(oauth2.create(), want)
+        self.assertEqual(TestOAuth2.oauth2.create(), want)
 
 if __name__ == '__main__':
     ut.main()

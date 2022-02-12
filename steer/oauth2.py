@@ -2,7 +2,6 @@ from json import loads, JSONDecodeError
 
 
 class ParseParams:
-    """Parse params from a json file, a set, or by a dictionary"""
 
     def params_from(self, json = False, params = None):
         """ Determine how the params will be assigned"""
@@ -36,17 +35,17 @@ class ParseParams:
 
 
 class OAuth2(ParseParams):
-    """Responsible to create the oauth2 request only"""
-
-    __OAUTH2_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
-
 
     def __init__(self, set_params = False, json = False, **params):
         """Assign values to the params variables"""
+
         self.uri = self.params_from(json=json, params=set_params or params)
+        self._oauth_url = 'https://accounts.google.com/o/oauth2/v2/auth'
 
 
-    # TODO: implements challenge
-    def create(self, challenge = False):
+    def create(self, challenge = None):
         """ Creates google authentication request """
-        return self.uri + __OAUTH2_URL
+        if challenge is None: 
+            return self._oauth_url + self.uri
+
+        return self._oauth_url + self.uri + challenge.method()
