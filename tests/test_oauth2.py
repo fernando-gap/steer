@@ -1,4 +1,4 @@
-from steer.oauth2 import OAuth2, ParseParams
+from steer.oauth2 import OAuth2, ParseParams, OAuth2CodeExchange
 import test_data
 
 
@@ -86,6 +86,51 @@ class TestOAuth2(ut.TestCase):
         want = "https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/scopes&redirect_uri=http://localhost:port&response_type=code&client_id=your_client_id"
 
         self.assertEqual(TestOAuth2.oauth2.create(), want)
+
+
+    def test_acesstoken(self):
+        instance = TestOAuth2.oauth2.acesstoken(secret="your_secret", code="oauth_code")
+        self.assertIsInstance(instance, OAuth2CodeExchange)
+
+
+    def test_acesstoken(self):
+        instance = TestOAuth2.oauth2.acesstoken(secret="your_secret", code="oauth_code")
+        self.assertIsInstance(instance, OAuth2CodeExchange)
+
+
+
+
+class TestOAuth2CodeExchange:
+
+    @classmethod
+    def setUpClass(self):
+        ex = OAuth2CodeExchange(
+            '&client_id=client_id',
+            '&redirect_uri=redirect_uri',
+            'response_code',
+            None,
+            'client_secret')
+
+        ex_c = OAuth2CodeExchange(
+            '&client_id=client_id',
+            '&redirect_uri=redirect_uri',
+            'response_code',
+            'code_verifier',
+            'client_secret')
+
+
+    def test_exchange():
+        with_code = TestOAuth2CodeExchange.ex_c.exchange()
+        no_code = TestOAuth2CodeExchange.ex.exchange()
+        result = 'https://oauth2.googleapis.com/token' \
+                 '?code=response_code' \
+                 '&grant_type=authorization_code' \
+                 '&client_id=client_id' \
+                 '&client_secret=client_secret' \
+                 '&redirect_uri=redirect_uri'
+
+        self.asserEquals(no_code, result)
+        self.assertEqual(with_code, (result + '&code_verifier=code_verifier'))
 
 if __name__ == '__main__':
     ut.main()
