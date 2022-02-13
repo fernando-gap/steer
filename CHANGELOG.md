@@ -35,5 +35,10 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 - Code refactor to create a better understanding on code
 
 ### Removed
-- Useless strings and code that are meanless
+- Useless strings and code that are meaningless
 
+
+## [0.4.0] - 2022-02-13
+### Added
+- Manipulate response from Google after the exchange operation is made
+- Added the possibility to check whether the access token is expired
