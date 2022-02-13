@@ -89,12 +89,12 @@ class TestOAuth2(ut.TestCase):
 
 
     def test_acesstoken(self):
-        instance = TestOAuth2.oauth2.acesstoken(secret="your_secret", code="oauth_code")
+        instance = TestOAuth2.oauth2.acesstoken(code="oauth_code")
         self.assertIsInstance(instance, OAuth2CodeExchange)
 
 
     def test_acesstoken(self):
-        instance = TestOAuth2.oauth2.acesstoken(secret="your_secret", code="oauth_code")
+        instance = TestOAuth2.oauth2.acesstoken(code="oauth_code")
         self.assertIsInstance(instance, OAuth2CodeExchange)
 
 

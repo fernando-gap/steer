@@ -62,49 +62,37 @@ class OAuth2(ParseParams):
             return OAuth2.create(self, self.code_challenge)
     
     
-    def acesstoken(self, *, secret, code): 
+    def acesstoken(self, code): 
         """Return a OAuth2CodeExchange factory"""
         # read secret from a file
-         
-        self.code = '?response_code=' + code
-        return OAuth2CodeExchange(self.client_id, 
-                                  self.redirect_uri,
-                                  self.code,
-                                  self.code_challenge,
-                                  secret)
+        return OAuth2CodeExchange(self, code)
 
 
 
 class OAuth2CodeExchange:
 
-    def __init__(self, client_id, 
-                 redirect_uri, 
-                 response_code,
-                 code_verifier,
-                 client_secret):
-        
+    def __init__(self, ids, code):
+        self.ids = ids
+
         # check whether a code challenge exists
-        if code_verifier is None:
+        if self.ids.code_challenge is None:
             self.code_verifier = ''
         else:
-            self.code_verifier = '&code_verifier=' + code_verifier.get_method()
+            self.code_verifier = '&code_verifier=' \
+                                  + self.ids.code_challenge.get_method()
 
-        self.client_secret = '&client_secret=' + client_secret
-        self._access_token_url = 'https://oauth2.googleapis.com/token'
-
-        self.client_id = client_id
-        self.redirect_uri = redirect_uri
-        self.response_code = response_code
+        self.grant_type = '&grant_type=authorization_code'
+        self.code = '?code=' + code
 
 
-    def exchange(self, grant_type = 'authorization_code'):
+    def exchange(self, secret):
         """Create OAuth2 URI access token exchange"""
 
-        return (_access_token_url
-                + '?code=' + self.response_code
-                + '&grant_type=' + grant_type
-                + self.client_id
-                + self.client_secret
-                + self.redirect_uri
-                + self.code_verifier)
+        return ('https://oauth2.googleapis.com/token'
+                + self.code
+                + self.ids.client_id
+                + self.ids.redirect_uri
+                + self.grant_type
+                + secret
+                + self.code_challenge)
 

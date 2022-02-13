@@ -42,3 +42,8 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 ### Added
 - Manipulate response from Google after the exchange operation is made
 - Added the possibility to check whether the access token is expired
+
+
+## [0.4.1] - 2022-02-13
+### Changed
+- Code refactor: pieces of code changed in oauth2.py file for a better understanding and less code
