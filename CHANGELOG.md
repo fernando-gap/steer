@@ -27,6 +27,13 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 - Base64url was adding a trailing equals "=" in code challenge that was causing an encode error
 
 
-## [0.3.0] - 2022-02-12
+## [0.3.0] - 2022-02-13
 ### Added
-- The OAuth2 authorization can be opened on the default browser
+- Exchange code URL can be created from OAuth2 class
+
+### Changed
+- Code refactor to create a better understanding on code
+
+### Removed
+- Useless strings and code that are meanless
+
