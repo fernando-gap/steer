@@ -47,3 +47,9 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 ## [0.4.1] - 2022-02-13
 ### Changed
 - Code refactor: pieces of code changed in oauth2.py file for a better understanding and less code
+
+
+## [0.5.0] - 2022-02-14
+### Added
+- Refresh tokens URI can be called
+- Revoke access URI can be now created

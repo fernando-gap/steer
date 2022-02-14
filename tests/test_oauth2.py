@@ -48,7 +48,9 @@ class TestParseParams(ut.TestCase):
 
     def test_parse_from(self):
         json = self.parse_params.params_from('./test_data/data.json')
-        want = "?scope=https://www.googleapis.com/auth/scopes&redirect_uri=http://localhost:port&response_type=code&client_id=your_client_id"
+        want = ("?scope=https://www.googleapis.com/auth/scopes"
+                "&redirect_uri=http://localhost:port"
+                "&response_type=code&client_id=your_client_id")
 
         from json import loads
 
@@ -83,19 +85,31 @@ class TestOAuth2(ut.TestCase):
         cls.oauth2 = OAuth2(json='test_data/data.json')
 
     def test_create(self):
-        want = "https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/scopes&redirect_uri=http://localhost:port&response_type=code&client_id=your_client_id"
+        want = ('https://accounts.google.com/o/oauth2/v2/auth?'
+                'scope=https://www.googleapis.com/auth/scopes'
+                '&redirect_uri=http://localhost:port'
+                '&response_type=code&client_id=your_client_id')
 
-        self.assertEqual(TestOAuth2.oauth2.create(), want)
+        self.assertEqual(self.oauth2.create(), want)
 
 
     def test_acesstoken(self):
-        instance = TestOAuth2.oauth2.acesstoken(code="oauth_code")
+        instance = self.oauth2.acesstoken(code="oauth_code")
         self.assertIsInstance(instance, OAuth2CodeExchange)
 
 
     def test_acesstoken(self):
-        instance = TestOAuth2.oauth2.acesstoken(code="oauth_code")
+        instance = self.oauth2.acesstoken(code="oauth_code")
         self.assertIsInstance(instance, OAuth2CodeExchange)
+
+
+    def test_revokeaccess(self):
+        revoke = self.oauth2.revokeaccess(refresh_token='refresh_token')
+        result = 'https://oauth2.googleapis.com/revoke?token=' \
+                 'refresh_token'
+
+        self.assertEqual(revoke, result)
+
 
 
 
@@ -131,6 +145,17 @@ class TestOAuth2CodeExchange:
 
         self.asserEquals(no_code, result)
         self.assertEqual(with_code, (result + '&code_verifier=code_verifier'))
+
+
+    def test_refreshtokens(self):
+        refresh = ex.refreshtokens('your_secret', 'refresh_token')
+        result = 'https://oauth2.googleapis.com/token' \
+                 '?grant_type=refresh_token' \
+                 '&client_id=client_id' \
+                 '&client_secret=your_secret' \
+                 '&refresh_token=refresh_token'
+
+        self.assertEqual(refresh, result)
 
 if __name__ == '__main__':
     ut.main()

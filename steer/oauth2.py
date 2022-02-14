@@ -60,13 +60,19 @@ class OAuth2(ParseParams):
 
         except browser.Error:
             return OAuth2.create(self, self.code_challenge)
-    
-    
+
+
     def acesstoken(self, code): 
         """Return a OAuth2CodeExchange factory"""
-        # read secret from a file
         return OAuth2CodeExchange(self, code)
 
+
+    def revokeaccess(self, **token):
+        """URL to revoke users' access"""
+        for k in token:
+            if k == 'refresh_token' or k == 'access_token':
+                return 'https://oauth2.googleapis.com/revoke?token=' \
+                    + token[k]
 
 
 class OAuth2CodeExchange:
@@ -96,3 +102,9 @@ class OAuth2CodeExchange:
                 + secret
                 + self.code_challenge)
 
+
+    def refreshtokens(self, secret, refresh_token):
+        return ('https://oauth2.googleapis.com/token?grant_type=refresh_token'
+                + self.params.client_id
+                + '&client_secret=' + secret
+                + '&refresh_token=' + refresh_token)
