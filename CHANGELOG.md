@@ -53,3 +53,6 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 ### Added
 - Refresh tokens URI can be called
 - Revoke access URI can be now created
+
+### Deprecated
+- OAuth2 for Desktop Apps & Mobile supports; it should support all types of OAuth2
