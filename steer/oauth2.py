@@ -38,7 +38,6 @@ class OAuth2(ParseParams):
     def __init__(self, set_params = False, json = False, **params):
         """Assign values to the params variables"""
 
-        self.code_challenge = None
         self.uri = self.params_from(json=json, params=set_params or params)
         self._oauth_url = 'https://accounts.google.com/o/oauth2/v2/auth'
 
@@ -46,8 +45,9 @@ class OAuth2(ParseParams):
     def create(self, challenge = None):
         """ Creates google authentication request """
 
-        if challenge is None: 
-            return self._oauth_url + self.uri 
+        if challenge == None:
+            self.code_challenge = None
+            return self._oauth_url + self.uri
 
         self.code_challenge = challenge
         return self._oauth_url + self.uri + self.code_challenge.method()
@@ -62,7 +62,7 @@ class OAuth2(ParseParams):
             return OAuth2.create(self, self.code_challenge)
 
 
-    def acesstoken(self, code): 
+    def accesstoken(self, code):
         """Return a OAuth2CodeExchange factory"""
         return OAuth2CodeExchange(self, code)
 
@@ -75,36 +75,31 @@ class OAuth2(ParseParams):
                     + token[k]
 
 
+    def refreshtokens(self, secret, refresh_token):
+        return ('https://oauth2.googleapis.com/token?grant_type=refresh_token'
+                + self.client_id
+                + '&client_secret=' + secret
+                + '&refresh_token=' + refresh_token)
+
 class OAuth2CodeExchange:
 
-    def __init__(self, ids, code):
-        self.ids = ids
+    def __init__(self, oauth2, code):
 
-        # check whether a code challenge exists
-        if self.ids.code_challenge is None:
-            self.code_verifier = ''
-        else:
-            self.code_verifier = '&code_verifier=' \
-                                  + self.ids.code_challenge.get_method()
-
-        self.grant_type = '&grant_type=authorization_code'
-        self.code = '?code=' + code
-
+        self.oauth2 = oauth2
+        self.code = '&code=' + code
 
     def exchange(self, secret):
         """Create OAuth2 URI access token exchange"""
 
-        return ('https://oauth2.googleapis.com/token'
+        if self.oauth2.code_challenge == None:
+            self.oauth2.code_challenge = ''
+        else:
+           self.oauth2.code_challenge = '&code_verifier=' + self.oauth2.code_challenge.get_method()
+
+        return ('https://oauth2.googleapis.com/token' \
+                '?grant_type=authorization_code'
                 + self.code
-                + self.ids.client_id
-                + self.ids.redirect_uri
-                + self.grant_type
-                + secret
-                + self.code_challenge)
-
-
-    def refreshtokens(self, secret, refresh_token):
-        return ('https://oauth2.googleapis.com/token?grant_type=refresh_token'
-                + self.params.client_id
+                + self.oauth2.client_id
+                + self.oauth2.redirect_uri
                 + '&client_secret=' + secret
-                + '&refresh_token=' + refresh_token)
+                + self.oauth2.code_challenge)

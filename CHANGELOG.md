@@ -56,3 +56,11 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 
 ### Deprecated
 - OAuth2 for Desktop Apps & Mobile supports; it should support all types of OAuth2
+
+
+## [0.5.1] - 2022-02-17
+### Changed
+- Code is more readable when sending long strings.
+
+### Fixed
+- Code challenge was unrecognize when passed to the OAuth2CodeExchange class causing errors when the client tries use the S256 method.
