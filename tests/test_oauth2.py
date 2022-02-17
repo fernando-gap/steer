@@ -85,21 +85,16 @@ class TestOAuth2(ut.TestCase):
         cls.oauth2 = OAuth2(json='test_data/data.json')
 
     def test_create(self):
-        want = ('https://accounts.google.com/o/oauth2/v2/auth?'
+        result = ('https://accounts.google.com/o/oauth2/v2/auth?'
                 'scope=https://www.googleapis.com/auth/scopes'
                 '&redirect_uri=http://localhost:port'
                 '&response_type=code&client_id=your_client_id')
 
-        self.assertEqual(self.oauth2.create(), want)
+        self.assertEqual(self.oauth2.create(), result)
 
 
-    def test_acesstoken(self):
-        instance = self.oauth2.acesstoken(code="oauth_code")
-        self.assertIsInstance(instance, OAuth2CodeExchange)
-
-
-    def test_acesstoken(self):
-        instance = self.oauth2.acesstoken(code="oauth_code")
+    def test_accesstoken(self):
+        instance = self.oauth2.accesstoken(code="oauth_code")
         self.assertIsInstance(instance, OAuth2CodeExchange)
 
 
@@ -110,52 +105,38 @@ class TestOAuth2(ut.TestCase):
 
         self.assertEqual(revoke, result)
 
+    
+    def test_refresh_tokens(self):
+        refresh = self.oauth2.refreshtokens('secret', 'tokens')
+        
+        result = 'https://oauth2.googleapis.com/token?grant_type=refresh_token' \
+                 '&client_id=your_client_id' \
+                 '&client_secret=secret' \
+                 '&refresh_token=tokens'
 
-
-
-
-class TestOAuth2CodeExchange:
-
-    @classmethod
-    def setUpClass(self):
-        ex = OAuth2CodeExchange(
-            '&client_id=client_id',
-            '&redirect_uri=redirect_uri',
-            'response_code',
-            None,
-            'client_secret')
-
-        ex_c = OAuth2CodeExchange(
-            '&client_id=client_id',
-            '&redirect_uri=redirect_uri',
-            'response_code',
-            'code_verifier',
-            'client_secret')
-
-
-    def test_exchange():
-        with_code = TestOAuth2CodeExchange.ex_c.exchange()
-        no_code = TestOAuth2CodeExchange.ex.exchange()
-        result = 'https://oauth2.googleapis.com/token' \
-                 '?code=response_code' \
-                 '&grant_type=authorization_code' \
-                 '&client_id=client_id' \
-                 '&client_secret=client_secret' \
-                 '&redirect_uri=redirect_uri'
-
-        self.asserEquals(no_code, result)
-        self.assertEqual(with_code, (result + '&code_verifier=code_verifier'))
-
-
-    def test_refreshtokens(self):
-        refresh = ex.refreshtokens('your_secret', 'refresh_token')
-        result = 'https://oauth2.googleapis.com/token' \
-                 '?grant_type=refresh_token' \
-                 '&client_id=client_id' \
-                 '&client_secret=your_secret' \
-                 '&refresh_token=refresh_token'
 
         self.assertEqual(refresh, result)
+
+
+
+class TestOAuth2CodeExchange(ut.TestCase):
+
+    def test_no_code_challenge_exchange(self):
+        #test without code_verifier
+        oauth2 = OAuth2(json='./test_data/data.json')
+        oauth2.create()
+        exchange = oauth2.accesstoken('code')
+        ex = exchange.exchange('secret')
+
+        result = 'https://oauth2.googleapis.com/token' \
+                 '?grant_type=authorization_code' \
+                 '&code=code' \
+                 '&client_id=your_client_id' \
+                 '&redirect_uri=http://localhost:port' \
+                 '&client_secret=secret' \
+
+        self.assertEqual(ex, result)
+
 
 if __name__ == '__main__':
     ut.main()

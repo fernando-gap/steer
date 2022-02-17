@@ -19,17 +19,17 @@ class TestOAuthResponse(ut.TestCase):
         result = [self.google_response['access_token'],
                   self.google_response['refresh_token']]
 
-        self.assertEquals(tokens, result)
+        self.assertEqual(tokens, result)
 
 
     def test_is_expired(self):
         # test if is expired
         self.res.expires_in = -3500
-        self.assertEquals(self.res.is_expired(), True)
+        self.assertEqual(self.res.is_expired(), True)
 
         # test if is not expired
         self.res.expires_in = 3500
-        self.assertEquals(self.res.is_expired(), False)
+        self.assertEqual(self.res.is_expired(), False)
 
 
 
