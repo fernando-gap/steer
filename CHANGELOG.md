@@ -64,3 +64,8 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 
 ### Fixed
 - Code challenge was unrecognize when passed to the OAuth2CodeExchange class causing errors when the client tries use the S256 method.
+
+
+## [0.6.0] - 2022-02-18
+## Added
+- The headers for each type of request simple and multipart/related methods are created to be handled.
