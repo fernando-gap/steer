@@ -67,5 +67,12 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 
 
 ## [0.6.0] - 2022-02-18
-## Added
+### Added
 - The headers for each type of request simple and multipart/related methods are created to be handled.
+
+
+## [1.0.0] - 2022-02-20
+### Added
+- A google drive functionality that permits the creation of a full upload http requests for google drive api.
+- Drive upload is a class that creates an upload request.
+    - Two methods are provided by the class simple upload method and multipart/related method
