@@ -76,3 +76,11 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 - A google drive functionality that permits the creation of a full upload http requests for google drive api.
 - Drive upload is a class that creates an upload request.
     - Two methods are provided by the class simple upload method and multipart/related method
+
+
+## [1.0.1] - 2022-02-20
+### Changed
+- Organize imports
+- functions that not belong to the import it now have a leading score.
+- All files used in the drive part is moved to the steer/drive.
+- Tests also has changed names.
