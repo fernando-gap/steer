@@ -1,10 +1,10 @@
 import unittest as ut
-import steer
+import steer.drive.headers as h
 
 class TestHeaders(ut.TestCase):
 
     def setUp(self):
-        self.header = steer.Header('access_token')
+        self.header = h._Header('access_token')
 
 
     def test_add_mime(self):
@@ -34,18 +34,18 @@ class TestHeaders(ut.TestCase):
         self.assertEqual(header_got, None)
     
     def test_get_length(self):
-        self.header.get_length('./test_data/bytes.txt')
-        self.assertEqual(self.header.headers['Content-Length'], '99')
+        len_ = self.header.get_length('./test_data/bytes.txt')
+        self.assertEqual(len_, '99')
 
 
 class TestSimple(ut.TestCase):
     
     def setUp(self):
-        self.simple = steer.Simple('access_token')
+        self.simple = h._Simple('access_token')
 
 
     def test_header(self):
-        headers_simple = self.simple.header('.txt', './test_data/bytes.txt')
+        headers_simple = self.simple.header('./test_data/bytes.txt', '.txt') 
         self.assertEqual(headers_simple, {'Authorization': 'Bearer access_token',
                                           'Content-Type': 'text/plain',
                                           'Content-Length': '99'})
@@ -55,7 +55,7 @@ class TestSimple(ut.TestCase):
 class TestMultipart(ut.TestCase):
 
     def setUp(self):
-        self.multipart = steer.Multipart('access_token')
+        self.multipart = h._Multipart('access_token')
 
 
     def test_metadata_header(self):
@@ -69,12 +69,12 @@ class TestMultipart(ut.TestCase):
         self.assertEqual(self.multipart.headers_media['Content-Type'], 'image/gif')
 
     def test_header(self):
-        headers = self.multipart.header('./test_data/bytes.txt', '.txt')
+        headers = self.multipart.header('./test_data/bytes.txt', '.txt', {})
         headers_all = {
             'top-level': {
                 'Authorization': 'Bearer access_token',
                 'Content-Type': 'multipart/related; boundary=file-actions',
-                'Content-Length': '99'
+                'Content-Length': '101'
             },
             'metadata': {
                 'Content-Type': 'application/json; charset=UTF-8'
