@@ -1,5 +1,5 @@
 import unittest as ut
-from steer import OAuth2Response
+from steer.oauth.response import OAuth2Response
 
 class TestOAuthResponse(ut.TestCase):
     

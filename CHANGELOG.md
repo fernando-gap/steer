@@ -84,3 +84,9 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 - functions that not belong to the import it now have a leading score.
 - All files used in the drive part is moved to the steer/drive.
 - Tests also has changed names.
+
+
+## [1.0.2] - 2022-02-20
+### Changed
+- OAuth2 file was moved to steer/oauth
+- As in the v1.0.1 imports and tests was organized

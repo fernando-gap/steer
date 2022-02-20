@@ -1,13 +1,12 @@
-from steer.oauth2 import OAuth2, ParseParams, OAuth2CodeExchange
-import test_data
-
-
 import unittest as ut
+
+from steer.oauth.api import OAuth2, _ParseParams, OAuth2CodeExchange
+
 
 class TestParseParams(ut.TestCase):
 
     def setUp(self):
-        self.parse_params = ParseParams()
+        self.parse_params = _ParseParams()
 
 
 
@@ -23,26 +22,26 @@ class TestParseParams(ut.TestCase):
         d_res = f'?scope={d_ls[0]}%20{d_ls[1]}%20{d_ls[2]}%20{d_ls[3]}'
         d_str = f'{d_ls[0]}%20{d_ls[1]}%20{d_ls[2]}%20{d_ls[3]}'
 
-        self.assertEqual(ParseParams.check_scopes(d_ls), d_res)
-        self.assertEqual(ParseParams.check_scopes(d_str), d_res)
+        self.assertEqual(_ParseParams.check_scopes(d_ls), d_res)
+        self.assertEqual(_ParseParams.check_scopes(d_str), d_res)
 
 
 
     def test_check_scopes_exc_raises(self):
         with self.assertRaises(TypeError):
-            ParseParams.check_scopes(False)
+            _ParseParams.check_scopes(False)
 
         with self.assertRaises(TypeError):
-            ParseParams.check_scopes(True)
+            _ParseParams.check_scopes(True)
 
         with self.assertRaises(TypeError):
-            ParseParams.check_scopes(None)
+            _ParseParams.check_scopes(None)
 
         with self.assertRaises(TypeError):
-            ParseParams.check_scopes(())
+            _ParseParams.check_scopes(())
 
         with self.assertRaises(TypeError):
-            ParseParams.check_scopes({})
+            _ParseParams.check_scopes({})
 
 
 
