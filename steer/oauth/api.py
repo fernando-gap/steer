@@ -13,6 +13,12 @@ class _ParseParams:
         self.redirect_uri = '&redirect_uri=' + params['redirect_uri']
         self.response_type = '&response_type=' + params['response_type']
 
+        if 'client_secret' in params:
+            self.client_secret = params['client_secret']
+        else:
+            self.client_secret = ''
+
+
         return (_ParseParams.check_scopes(params['scopes'])
                 + self.redirect_uri
                 + self.response_type
@@ -91,7 +97,8 @@ class OAuth2CodeExchange:
         self.oauth2 = oauth2
         self.code = '&code=' + code
 
-    def exchange(self, secret):
+
+    def exchange(self, secret = ''):
         """Create OAuth2 URI access token exchange"""
 
         if self.oauth2.code_challenge == None:
@@ -104,5 +111,5 @@ class OAuth2CodeExchange:
                 + self.code
                 + self.oauth2.client_id
                 + self.oauth2.redirect_uri
-                + '&client_secret=' + secret
+                + '&client_secret=' + secret + self.oauth2.client_secret
                 + self.oauth2.code_challenge)

@@ -1,5 +1,4 @@
 import unittest as ut
-
 from steer.oauth.api import OAuth2, _ParseParams, OAuth2CodeExchange
 
 
@@ -82,7 +81,8 @@ class TestOAuth2(ut.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.oauth2 = OAuth2(json='test_data/data.json')
-
+        
+    
     def test_create(self):
         result = ('https://accounts.google.com/o/oauth2/v2/auth?'
                 'scope=https://www.googleapis.com/auth/scopes'
@@ -117,7 +117,6 @@ class TestOAuth2(ut.TestCase):
         self.assertEqual(refresh, result)
 
 
-
 class TestOAuth2CodeExchange(ut.TestCase):
 
     def test_no_code_challenge_exchange(self):
@@ -125,7 +124,7 @@ class TestOAuth2CodeExchange(ut.TestCase):
         oauth2 = OAuth2(json='./test_data/data.json')
         oauth2.create()
         exchange = oauth2.accesstoken('code')
-        ex = exchange.exchange('secret')
+        ex = exchange.exchange(secret='secret')
 
         result = 'https://oauth2.googleapis.com/token' \
                  '?grant_type=authorization_code' \
@@ -135,6 +134,22 @@ class TestOAuth2CodeExchange(ut.TestCase):
                  '&client_secret=secret' \
 
         self.assertEqual(ex, result)
+
+
+    def test_code_challenge_exchange(self):
+        # test when json holds client secret
+        oauth = OAuth2(json='test_data/data-1.json')
+        oauth.create()
+        ex = oauth.accesstoken('code')
+        token = ex.exchange()
+        expected ='https://oauth2.googleapis.com/token' \
+                  '?grant_type=authorization_code' \
+                  '&code=code' \
+                  '&client_id=your_client_id' \
+                  '&redirect_uri=http://localhost:port' \
+                  '&client_secret=secret' \
+
+        self.assertEqual(token, expected)
 
 
 if __name__ == '__main__':
