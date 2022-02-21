@@ -5,7 +5,7 @@ with open('./README.md') as doc:
 
 setup(
     name="steer",
-    version="1.1.2",
+    version="1.1.0",
     author="Fernando A.",
     url="https://github.com/fernando-gap/steer",
     license="MIT",
