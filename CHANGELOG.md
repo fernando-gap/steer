@@ -90,3 +90,8 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 ### Changed
 - OAuth2 file was moved to steer/oauth
 - As in the v1.0.1 imports and tests was organized
+
+
+## [1.1.0] - 2022-02-21
+### Changed
+- The OAuth2 class can pass all necessary arguments instead of passing in different functions, they are bounded together.
