@@ -29,3 +29,6 @@ Three methods are used to upload media according to Google Drive: simple, multip
 
 - The simple method can upload either metadata or media it cannot upload both.
 - The multipart method can both upload metadata and media.
+
+## License
+This project is under the MIT License.
