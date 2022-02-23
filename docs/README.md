@@ -62,9 +62,9 @@ Before dive in the OAuth2 is necessary to understand how google uses it, and whi
 - client_secret
 
 The class OAuth2 can load these necessary config to create the OAuth2 URLs, it can be provided a *json*, a *dictionary*, or passing *keywords* arguments to the instance.
-```
-// config.json
 
+config.json
+```json
 {
     "client_id": "your_client_id",
     "scope": "authorization_scope",
