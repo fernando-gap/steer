@@ -1,0 +1,14 @@
+{
+    "oscopes": {
+        "a": "?scope=a%20b%20l",
+        "b": "?scope=abc",
+        "c": "?client_id=client_id&response_type=code&scope=scope&redirect_uri=redirect_uri"
+    },
+
+    "o_auth2": {
+        "a": "https://accounts.google.com/o/oauth2/v2/auth?client_id=client_id&response_type=code&scope=scope&redirect_uri=redirect_uri",
+
+    "b": "https://oauth2.googleapis.com/token?client_id=client_id&redirect_uri=redirect_uri&client_secret=client_secret&code=code&grant_type=authorization_code",
+    "c": "https://oauth2.googleapis.com/token?client_id=client_id&client_secret=client_secret&refresh_token=refresh_token&grant_type=refresh_token"
+    }
+}
