@@ -95,3 +95,8 @@ and this project **do not** adheres to [Semantic Versioning](https://semver.org/
 ## [1.1.0] - 2022-02-21
 ### Changed
 - The OAuth2 class can pass all necessary arguments instead of passing in different functions, they are bounded together.
+
+## [1.1.1] - 2022-02-21
+### Changed
+- Test: tests have changed, the tests is separated by folder names and files in json which is very well organized now. This change occurs at: d63754e
+- The usability of the functions of oauth2 was affected by another functions, the problem was that the user should use a function before to use other one. This problem was fixed it can now invoke any function at any time.

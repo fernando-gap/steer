@@ -1,61 +1,78 @@
 
 class _ParseParams:
 
-    def params_from(self, json = False, params = None):
-        """ Determine how the params will be assigned"""
-        from json import loads
+    def _create_url_params(self, params):
+        """Create URL params into a dictionary"""
 
-        if type(json) == str:
-            with open(json, 'r') as file:
-                params = loads(file.read())
+        self.params = params
+        url_params = ''
 
-        self.client_id = '&client_id=' + params['client_id']
-        self.redirect_uri = '&redirect_uri=' + params['redirect_uri']
-        self.response_type = '&response_type=' + params['response_type']
+        # multiple scopes only if exist the prop and it is a list
+        if 'scope' in params:
+            if type(params.get('scope')) is list:
+               params['scope'] = '%20'.join(params['scope'])
 
-        if 'client_secret' in params:
-            self.client_secret = params['client_secret']
-        else:
-            self.client_secret = ''
+        is_first_param = 0
+        for field, value in params.items():
+            if is_first_param == 0:
 
+                url_params += f'?{field}={value}'
+                is_first_param += 1
+            else:
+                url_params += f'&{field}={value}'
 
-        return (_ParseParams.check_scopes(params['scopes'])
-                + self.redirect_uri
-                + self.response_type
-                + self.client_id)
+        # where this is used when empty?
+        # it is used in the class OAuth2CodeExchange
+        # if the user do not choose to read from a json
+        # it should be read from a passing argument.
+        # if it also empty it should return an error
+        # the program DO NOT return one.
 
-
-
-    @staticmethod
-    def check_scopes(scopes):
-        """The scopes can be both: list or a string"""
-
-        layout = '?scope='
-        if type(scopes) is list:
-           return layout + '%20'.join(scopes)
-
-        return layout + scopes
-
+        return url_params
 
 
 class OAuth2(_ParseParams):
 
-    def __init__(self, set_params = False, json = False, **params):
+    def __init__(self, dict_params = False, json_path = False, **params):
         """Assign values to the params variables"""
 
-        self.uri = self.params_from(json=json, params=set_params or params)
         self._oauth_url = 'https://accounts.google.com/o/oauth2/v2/auth'
+
+        if json_path != False:
+            from json import loads
+            with open(json_path, 'r') as file:
+                params = loads(file.read())
+
+        self.params = params
+        self.code_challenge = ''
+
+        if type(dict_params) is dict:
+            self.params = dict_params
 
 
     def create(self, challenge = None):
-        """ Creates google authentication request """
+        """ Creates google authentication request URL for Desktop APPS.
+
+        To create an oauth url it needs the following attributes:
+
+        :client_id
+        :scope
+        :response_type
+        :redirect_uri
+
+        The support provided is the Loopbakc IP address which is
+        recommended by google.
+        """
+        # assign self.params to use the params provided by the user
+        # and store the params to create the url
+        params = self._create_url_params(self.params)
+
 
         if challenge == None:
-            self.code_challenge = None
-            return self._oauth_url + self.uri
+            return self._oauth_url + params
 
         self.code_challenge = challenge
-        return self._oauth_url + self.uri + self.code_challenge.method()
+        return self._oauth_url + params + self.code_challenge.method()
 
 
     def open(self):
@@ -70,9 +87,38 @@ class OAuth2(_ParseParams):
             return OAuth2.create(self, self.code_challenge)
 
 
-    def accesstoken(self, code):
-        """Return a OAuth2CodeExchange factory"""
-        return OAuth2CodeExchange(self, code)
+    # Do not return a factory instead return the rusult of OAuth2CodeExchange.exchange()
+    def accesstoken(self, code, secret = None):
+        """Create an oauth2 code exchange URL.
+
+        Arguments:
+        :code: str -- A code response given by google
+        :secret: str -- A client OAuth2 secret (optional)
+
+        To create an Exchange Authorization Token it needs the 
+        following attributes:
+
+            :client_id
+            :client_secret
+            :code
+            :code_verifier (optional)
+            :grant_type
+            :redirect_uri
+        """
+
+        # to avoiding changing self.params
+        params_copy = self.params.copy()
+        params_copy.pop('scope')
+        params_copy.pop('response_type')
+
+        if 'client_secret' not in self.params:
+            params_copy.update({'client_secret': secret})
+
+        params_copy.update({
+            'code': code,
+            'grant_type': 'authorization_code'
+        })
+        return OAuth2CodeExchange(params_copy, self.code_challenge).exchange()
 
 
     def revokeaccess(self, **token):
@@ -83,33 +129,48 @@ class OAuth2(_ParseParams):
                     + token[k]
 
 
-    def refreshtokens(self, secret, refresh_token):
-        return ('https://oauth2.googleapis.com/token?grant_type=refresh_token'
-                + self.client_id
-                + '&client_secret=' + secret
-                + '&refresh_token=' + refresh_token)
+    # Do not read from the params try to read from the params dictionary first
+    def refreshtokens(self, refresh_token, secret = ''):
+
+        refresh_params = self.params.copy()
+
+        # remove uneeded keys
+        refresh_params.pop('redirect_uri')
+        refresh_params.pop('response_type')
+        refresh_params.pop('scope')
+
+        # check if a secret is already defined
+        if 'client_secret' not in self.params:
+            refresh_params.update({'client_secret': secret})
+
+        refresh_params.update({'refresh_token': refresh_token})
+        refresh_params.update({'grant_type': 'refresh_token'})
+        params = self._create_url_params(refresh_params)
+
+        return 'https://oauth2.googleapis.com/token' + params
 
 
-class OAuth2CodeExchange:
+# inherit the _ParseParams class
+class OAuth2CodeExchange(_ParseParams):
 
-    def __init__(self, oauth2, code):
+    def __init__(self, oauth, challenge = ''):
 
-        self.oauth2 = oauth2
-        self.code = '&code=' + code
+        from json import loads
+
+        # in case oauth is json
+        if type(oauth) is str:
+            with open(oauth) as file:
+                oauth = file.read()
+                
+        self.oauth = oauth
+        self.code_verifier = challenge
 
 
-    def exchange(self, secret = ''):
+    def exchange(self):
         """Create OAuth2 URI access token exchange"""
 
-        if self.oauth2.code_challenge == None:
-            self.oauth2.code_challenge = ''
-        else:
-           self.oauth2.code_challenge = '&code_verifier=' + self.oauth2.code_challenge.get_method()
+        if type(self.code_verifier) is not str:
+            self.oauth.update({'code_verifier': self.code_verifier.get_method()})
 
         return ('https://oauth2.googleapis.com/token' \
-                '?grant_type=authorization_code'
-                + self.code
-                + self.oauth2.client_id
-                + self.oauth2.redirect_uri
-                + '&client_secret=' + secret + self.oauth2.client_secret
-                + self.oauth2.code_challenge)
+                + self._create_url_params(self.oauth))
