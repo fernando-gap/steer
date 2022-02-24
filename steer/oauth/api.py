@@ -59,11 +59,17 @@ class OAuth2(_ParseParams):
         
         valid = ['client_id', 'scope', 'response_type', 'redirect_uri']
         create_params = self.params.copy()
+        
+        # check if all valid keys exists
+        for key in create_params:
+            if key not in create_params:
+                raise KeyError(f'{key} is missing')
+        
         # invalid attributes are removed
-        for key in valid:
-            if key not in self.params:
+        for key in self.params:
+            if key not in valid:
                 create_params.pop(key)
-            
+
             
         # assign self.params to use the params provided by the user
         # and store the params to create the url    
