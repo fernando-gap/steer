@@ -69,7 +69,7 @@ class OAuth2(_ParseParams):
         for key in self.params:
             if key not in valid:
                 create_params.pop(key)
-                    
+
             
         # assign self.params to use the params provided by the user
         # and store the params to create the url    
