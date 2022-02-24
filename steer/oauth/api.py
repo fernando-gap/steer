@@ -21,13 +21,6 @@ class _ParseParams:
             else:
                 url_params += f'&{field}={value}'
 
-        # where this is used when empty?
-        # it is used in the class OAuth2CodeExchange
-        # if the user do not choose to read from a json
-        # it should be read from a passing argument.
-        # if it also empty it should return an error
-        # the program DO NOT return one.
-
         return url_params
 
 
@@ -64,10 +57,12 @@ class OAuth2(_ParseParams):
         recommended by google.
         """
         
-        # client secret is not in the create method attributes
-        if 'client_secret' in self.params:
-            create_params = self.params.copy()
-            create_params.pop('client_secret')
+        valid = ['client_id', 'scope', 'response_type', 'redirect_uri']
+        create_params = self.params.copy()
+        # invalid attributes are removed
+        for key in valid:
+            if key not in self.params:
+                create_params.pop(key)
             
             
         # assign self.params to use the params provided by the user
