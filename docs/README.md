@@ -6,26 +6,10 @@ This document list all API reference and guide you on how to use Steer.
 - [The guide](#the-guide)
     - [Dependencies](#dependencies)
 - [Packages](#packages)
+- [OAuth2](#oauth2)
 
 # What is Steer
 Steer is a URL creator for OAuth2 and Drive for Google APIs as mentioned [here](https://github.com/fernando-gap/steer#steer). What Steer **does not** actually do is make a **HTTP request**, and create other types of OAuth2 URLs other than *Desktop & Mobile Apps*.
-
-# The Guide
-This is a guide throughout the api reference, each method and class will be explained and used in a ***interactive example*** that you can follow and in the end you will have an app built with the Steer API. The dependencies is required in case you are willing to stick with the example. 
-
-## Dependencies
-It is assumed that you already have pip and python, if not install it and comeback later :). to Install *flask* and *requests* do the following:
-```
-$ pip install flask
-$ pip install requests
-```
-
-## The Application Example
-The example that will be used in this guide **do not interfere** if you don't follow.
-
-The app purpose is simple: each time the user executes the app a file is written in its Drive, the user can pass arguments to revoke the access, and update a file, also the application should be refreshing the token to avoid the user do the OAuth2 screen again.
-
-The example is used inside a [project of google](https://developers.google.com/workspace/guides/create-project), and it is assumed that you already have a project and the API keys to get started. 
 
 # Packages
 The Steer API has two packages oauth and drive which provides useful modules to handle Google API URLs.
@@ -126,52 +110,6 @@ oauth.open()
 ```
 
 The user should authorize the application to access its drive to tell Google to send the authorization code to our `Loopback IP address`.
-
-
-## The redirect_uri
-The redirect URI is where Google send the authorization code, we will be using the **Loopback IP address**.
-
-### Example
-After the `oauth.open()` is performed, a code is sent to the Loopback IP address.
-
-The implementation of this in our app is a simple flask instance used with some [coroutines](https://realpython.com/async-io-python/) functions. This is the **continuation of our app** example:
-```python
-# app.py
-from flask import Flask, request, redirect
-from steer.oauth.api import OAuth2
-
-from os import kill, getpid
-from signal import SIGINT
-import asyncio
-
-code_url = ''
-
-async def server():
-    app = Flask(__name__)
-
-    @app.route('/')
-    def oauth_code():
-        code = request.args.get('code')
-        code_url = oauth.accesstoken(code)
-        return redirect('/exit')
-
-    @app.route('/exit')
-    def exit():
-        kill(getpid(), SIGINT)
-        return ""
-
-    return
-
-oauth = OAuth2(json_path='./config.json')
-oauth.create()
-oauth.open()
-asyncio.run(server())
-
-```
-
-At this stage the file should look like above.
-
-The first thing added to our app was the OAuth2 URL, that enables the user to login in. The second is a server implemented in Flask which is a coroutine that awaits a request from Google, after a request is received the authorization code is stored as `code`, and the code exchange URL is made by [`OAuth2.accesstoken()`](#oauth2accesstokencode-secretnone). At the end the server is closed by killing the process with `kill`.
 
 <!-- OAuth2 package continuation -->
 ### OAuth2.accesstoken(code, secret=None)
