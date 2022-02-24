@@ -99,8 +99,11 @@ auth = OAuth2(client_id="your_client_id",
 ```
 
 ## OAuth2 Methods
-### OAuth2.create()
+### OAuth2.create(challenge=None)
 The create method is the *first* thing you invoke if you want to authenticate the user, it creates the URL for your application. The create method do not need any arguments. The method return the respective URL if you want to store in a variable.
+
+Arguments:
+- challenge - The challenge is a `code_challenge` created for every request, and sent to the authorization url to get the access token. Steer provides a class to create URL with this type of request. More in **<code_challenge_section>**
 
 #### Example
 The first thing in our example is to add the OAuth2 authentication and create an OAuth2 URL.
@@ -114,7 +117,7 @@ oauth.create()
 ```
 
 ### OAuth2.open()
-Google do not let you open this request using a *http client* because this URL opens a user consent screen of Google. This method does exactly this it opens the default browser of the user executing the program when called.
+Google do not let you open this request using a *http client* because this URL opens a user consent screen of Google. This method does exactly this it opens the default user's browser to start the OAuth2.
 
 #### Example
 Open the default browser of the client in our example.
