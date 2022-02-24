@@ -21,13 +21,6 @@ class _ParseParams:
             else:
                 url_params += f'&{field}={value}'
 
-        # where this is used when empty?
-        # it is used in the class OAuth2CodeExchange
-        # if the user do not choose to read from a json
-        # it should be read from a passing argument.
-        # if it also empty it should return an error
-        # the program DO NOT return one.
-
         return url_params
 
 
@@ -63,9 +56,18 @@ class OAuth2(_ParseParams):
         The support provided is the Loopbakc IP address which is
         recommended by google.
         """
+        
+        valid = ['client_id', 'scope', 'response_type', 'redirect_uri']
+        create_params = self.params.copy()
+        # invalid attributes are removed
+        for key in valid:
+            if key not in self.params:
+                create_params.pop(key)
+            
+            
         # assign self.params to use the params provided by the user
-        # and store the params to create the url
-        params = self._create_url_params(self.params)
+        # and store the params to create the url    
+        params = self._create_url_params(create_params)
 
 
         if challenge == None:
@@ -111,8 +113,10 @@ class OAuth2(_ParseParams):
         params_copy.pop('scope')
         params_copy.pop('response_type')
 
-        if 'client_secret' not in self.params:
+        if 'client_secret' not in self.params and secret != None:
             params_copy.update({'client_secret': secret})
+        else:
+            raise TypeError('client secret was not provided')
 
         params_copy.update({
             'code': code,
