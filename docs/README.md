@@ -98,6 +98,8 @@ auth = OAuth2(client_id="your_client_id",
               )
 ```
 
+The example application uses the `config.json` as configuration. 
+
 ## OAuth2 Methods
 ### OAuth2.create(challenge=None)
 The create method is the *first* thing you invoke if you want to authenticate the user, it creates the URL for your application. The create method do not need any arguments. The method return the respective URL if you want to store in a variable.
@@ -125,6 +127,8 @@ Open the default browser of the client in our example.
 oauth.open()
 ```
 
+The user should authorize the application to access its drive. When this happen the Google server sends an authorization code from our Loopback IP address as described [here](#the-redirect_uri) the link is a continuation of our app example.
+
 ### OAuth2.accesstoken(code, secret=None)
 The code received is needed to use in the code exchange which is the second thing you needed to do after you send the last request that is when you call `OAuth2.create()`.
 
@@ -137,3 +141,62 @@ To exchange the code for an *access_token* and a *refresh_token*
 ```python
 code_url = oauth.accesstoken(code)
 ```
+
+After the code exchange is ready it is necessary to create a `POST` request to obtain the `access_token` and `refresh_token`.
+At the end of the file put this.
+```python
+import requests
+
+response = requests.post(code_url)
+tokens = response.json()
+```
+The `tokens` is a response in json format including the `access_token`, `refresh_token`, and `expires_in` properties. To keep going with the example continue here. <link> 
+
+# The redirect_uri
+The redirect URI is where Google send the authorization code, we will be using the Loopback IP address.
+
+### Example
+After the `oauth.open()` is performed, the user should authorize the application to access the user's Drive. If the user authorizes then the Google should send the authorization token to where your server is listening to.
+
+The implementation of this is a simple flask instance used with some [coroutines](https://realpython.com/async-io-python/) functions.
+
+This is the **continuation of our app** example:
+```python
+# app.py
+from flask import Flask, request, redirect
+from steer.oauth.api import OAuth2
+
+from os import kill, getpid
+from signal import SIGINT
+import asyncio
+
+code_url = ''
+
+async def server():
+    app = Flask(__name__)
+
+    @app.route('/')
+    def oauth_code():
+        code = request.args.get('code')
+        code_url = oauth.accesstoken(code)
+        return redirect('/exit')
+
+    @app.route('/exit')
+    def exit():
+        kill(getpid(), SIGINT)
+        return ""
+
+    return
+
+oauth = OAuth2(json_path='./config.json')
+oauth.create()
+oauth.open()
+asyncio.run(server())
+
+```
+
+At this stage the file should look like above.
+
+The first thing added to our app it was the OAuth2 URL, that enables the user to login in. The second is a server implemented in Flask which is a coroutine that awaits a request from Google, after a request is received the authorization code is stored as `code`, and the code exchange URL is made by [`OAuth2.accesstoken()`](#oauth2accesstokencode-secretnone). At the end the server is closed by killing the process with `kill`.
+
+To continue with the example click [here](#oauth2accesstokencode-secretnone)
