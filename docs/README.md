@@ -121,3 +121,16 @@ Open the default browser of the client in our example.
 ```python
 oauth.open()
 ```
+
+### OAuth2.accesstoken(code, secret=None)
+The code received is needed to use in the code exchange which is the second thing you needed to do after you send the last request that is when you call `OAuth2.create()`.
+
+Arguments:
+- code - The code is given by Google after the user gives access to the application
+- secret - the client_secret (optional)
+
+#### Example
+To exchange the code for an *access_token* and a *refresh_token*
+```python
+code_url = oauth.accesstoken(code)
+```
