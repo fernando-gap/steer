@@ -119,10 +119,11 @@ class OAuth2(_ParseParams):
         params_copy.pop('scope')
         params_copy.pop('response_type')
 
-        if 'client_secret' not in self.params and secret != None:
-            params_copy.update({'client_secret': secret})
-        else:
-            raise TypeError('client secret was not provided')
+        if 'client_secret' not in self.params:
+            if secret != None:
+                params_copy.update({'client_secret': secret})
+            else:
+                raise TypeError('client secret was not provided')
 
         params_copy.update({
             'code': code,
