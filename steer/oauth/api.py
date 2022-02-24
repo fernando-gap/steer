@@ -61,7 +61,7 @@ class OAuth2(_ParseParams):
         create_params = self.params.copy()
         
         # check if all valid keys exists
-        for key in create_params:
+        for key in valid:
             if key not in create_params:
                 raise KeyError(f'{key} is missing')
         
