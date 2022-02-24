@@ -1,10 +1,8 @@
 # Reference
-This document list all API reference and guide you on how to use Steer.
+This document list all API reference and guide you on how to use Steer. To follow the guide to create your first app click [here](https://github.com/fernando-gap/steer/blob/main/docs/EXAMPLE-APP.md).
 
 # Contents
 - [What is Steer](#what-is-steer)
-- [The guide](#the-guide)
-    - [Dependencies](#dependencies)
 - [Packages](#packages)
 - [OAuth2](#oauth2)
 
