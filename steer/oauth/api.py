@@ -60,9 +60,12 @@ class OAuth2(_ParseParams):
         valid = ['client_id', 'scope', 'response_type', 'redirect_uri']
         create_params = self.params.copy()
         # invalid attributes are removed
-        for key in valid:
-            if key not in self.params:
-                create_params.pop(key)
+        for key in create_params:
+            if key not in valid:
+                try:
+                    create_params.pop(key)
+                except KeyError:
+                    raise KeyError('missing required property')
             
             
         # assign self.params to use the params provided by the user
