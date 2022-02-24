@@ -63,9 +63,16 @@ class OAuth2(_ParseParams):
         The support provided is the Loopbakc IP address which is
         recommended by google.
         """
+        
+        # client secret is not in the create method attributes
+        if 'client_secret' in self.params:
+            create_params = self.params.copy()
+            create_params.pop('client_secret')
+            
+            
         # assign self.params to use the params provided by the user
-        # and store the params to create the url
-        params = self._create_url_params(self.params)
+        # and store the params to create the url    
+        params = self._create_url_params(create_params)
 
 
         if challenge == None:
@@ -111,8 +118,10 @@ class OAuth2(_ParseParams):
         params_copy.pop('scope')
         params_copy.pop('response_type')
 
-        if 'client_secret' not in self.params:
+        if 'client_secret' not in self.params and secret != None:
             params_copy.update({'client_secret': secret})
+        else:
+            raise TypeError('client secret was not provided')
 
         params_copy.update({
             'code': code,
