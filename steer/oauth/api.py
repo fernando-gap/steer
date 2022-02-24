@@ -43,7 +43,7 @@ class OAuth2(_ParseParams):
             self.params = dict_params
 
 
-    def create(self, challenge = None):
+    def create(self, challenge = ''):
         """ Creates google authentication request URL for Desktop APPS.
 
         To create an oauth url it needs the following attributes:
@@ -70,7 +70,7 @@ class OAuth2(_ParseParams):
         params = self._create_url_params(create_params)
 
 
-        if challenge == None:
+        if challenge == '':
             return self._oauth_url + params
 
         self.code_challenge = challenge
