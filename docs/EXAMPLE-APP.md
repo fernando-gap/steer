@@ -307,6 +307,8 @@ The function `revoke_access` tries to open the `tokens.json` to read the access_
 If the user has one, then the request is made to revoke the access, and the app closes.
 
 ```python
+import sys
+
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == '--revoke':
         revoke_access(oauth)
