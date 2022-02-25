@@ -4,7 +4,6 @@ class _ParseParams:
     def _create_url_params(self, params):
         """Create URL params into a dictionary"""
 
-        self.params = params
         url_params = ''
 
         # multiple scopes only if exist the prop and it is a list
@@ -145,19 +144,23 @@ class OAuth2(_ParseParams):
 
         refresh_params = self.params.copy()
 
-        # remove uneeded keys
-        refresh_params.pop('redirect_uri')
-        refresh_params.pop('response_type')
-        refresh_params.pop('scope')
+        # the grant_type never changes
+        refresh_params.update({
+            'grant_type': 'refresh_token',
+            'refresh_token': refresh_token
+        })
 
         # check if a secret is already defined
         if 'client_secret' not in self.params:
             refresh_params.update({'client_secret': secret})
 
-        refresh_params.update({'refresh_token': refresh_token})
-        refresh_params.update({'grant_type': 'refresh_token'})
-        params = self._create_url_params(refresh_params)
+        # removed uneeded keys
+        valid = ['client_id', 'client_secret', 'grant_type', 'refresh_token']
+        for key in self.params:
+            if key not in valid:
+                refresh_params.pop(key)
 
+        params = self._create_url_params(refresh_params)
         return 'https://oauth2.googleapis.com/token' + params
 
 
