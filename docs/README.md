@@ -12,16 +12,11 @@ This document list all API reference and guide you on how to use Steer. To follo
         - [revokeaccess](#oauth2revokeaccesstoken)
         - [refreshtokens](#oauth2refreshtokensrefresh_token--secret)
     - [Challenge Class](#challenge-class)
-        - [Randstring](#randstring)
-        - [method](#randstring)
-        - [get_method](#get--method)
     - [OAuth2Response Class](#oauth2response-class) 
 - [Drive](#drive)
-    - [The drive module](#the-drive-module)
     - [Upload Class](#upload-class)
         - [simple](#simple)
         - [multipart](#multipart)
-    - [Update Class](#update-class)
 
 # What is Steer
 Steer is a URL creator for OAuth2 and Drive for Google APIs as mentioned [here](https://github.com/fernando-gap/steer#steer). What Steer **does not** actually do is make a **HTTP request**, and create other types of OAuth2 URLs other than *Desktop & Mobile Apps*.
@@ -159,3 +154,157 @@ Arguments:
 ```python
 oauth.refreshtokens('refresh_token')
 ```
+
+# Challenge Class
+
+The challenge module is meant for those who wants adhere to the Proof Key for Code Exchange ([PKFC](https://datatracker.ietf.org/doc/html/rfc7636)).
+
+To import the module:
+```python
+from steer.oauth.challenge import S256
+```
+Google accepts two methods S256 and Plain, steer applies only to S256. You can implement the plain by inheriting the `IMethod` Class in the module.
+
+To use the method is simple you pass the class as argument in the `oauth` instance.
+
+```python
+from steer.oauth.challenge import S256
+
+oauth.create(S256())
+```
+
+# OAuth2Response Class
+The class stores the mainly tokens after the code exchange step or when you are refreshing a token, also the class provides a method to check whether the access token is expired.
+
+Attributes:
+- access_token 
+- refresh_token
+- before_expires - when the access_token was issued
+- expires_in - time in seconds
+- when_expires - when the token validation ends 
+
+
+Instance Arguments:
+- res - It is the response given by google
+
+```python
+handle = OAuth2Response(res)
+```
+
+## OAuth2Response Methods
+### OAuth2.is_expired()
+This method checks if the token is expired.
+```python
+handle.is_expired()
+```
+The method result either return true or false.
+
+
+# Drive
+The drive package offers two classes `Upload` and `Update` that creates all the necessary efforts to create a URL to send to Google Drive to upload a file or update one. 
+
+## Upload Class
+The upload class is to create a upload request to the user's Google Drive, it supports two methods provided by Steer that is the simple media, and multipart media upload.
+
+Instance Arguments:
+A `data` argument is passed in the class instantiation which is a dictionary that contains the following keys:
+
+```python
+data = {
+    "url": "the drive url",
+    "params": {"url": "parameters"},
+    "token": "access_token",
+    "meta_data": "file's metadata",
+    "file_path": "path/to/file"
+}
+```
+
+If both meta data and file is provided **only** the file is upload if the user choose to use the simple upload media, to upload the metadata only make sure you remove the `file_path` key.
+
+## Upload Methods
+
+### Upload.simple(media = None)
+The `simple` method upload only one thing at time whether is the file's metadata or file's data. 
+
+Arguments:
+- media - if not passed as argument in the instatiation, the method looks to the media argument to check if there are any, if not, then it means that the user does not provide any media type, hence the method throws an error.
+
+```python
+from steer.drive.upload import Upload
+upload = Upload(data)
+url = upload.simple({"name":"example.txt"})
+```
+The simple will create a URL in json format that Google uses. The method returns a dictionary with the following keys and values, the method returns the following keys when its uploading the metadata for a file:
+
+```json
+{
+    "method": "POST",
+    "url": "https://www.googleapis.com/drive/v3/files",
+    "headers": {
+        "Content-Type": "application/json",
+        "Content-Lenght": "23"
+    },
+    "body": {
+        "metadata": {
+            "name": "example.txt"
+        }
+    },
+    "full_url": "https://www.googleapis.com/drive/v3/files?uploadType=simple",
+    "params": {
+        "uploadType": "simple"
+    }
+}
+```
+
+### Upload.multipart(file = None, metadata = None)
+The multipart is the method that uploads both metadata, and media. Specified by [RFC 2387](https://datatracker.ietf.org/doc/html/rfc2387), multipart/related is a type of request that creates an object made by compound ones, meaning that an object can contain multiple *distincts* parts that forms *only* one.
+
+Google uses it, the file being the object and its compound being the metadata, and the file's data.
+
+Arguments:
+- file - location of the file in the system
+- metadata - file's metadata
+
+If one of the arguments is *not* provided the method returns an error.
+
+```python
+url = upload.multipart(file='./greetings.txt', 
+           metadata={"name": "greetings.txt"}
+           )
+```
+
+The returns of a multipart related content differs a bit from simple.
+
+```json
+{
+    "method":"POST",
+    "url":"https://www.googleapis.com/upload/drive/v3/files",
+    "params":{
+        "uploadType":"multipart"
+    },
+    "headers":{
+        "top-level":{
+            "Authorization":"Bearer access_token",
+            "Content-Type":"multipart/related; boundary=file-actions",
+            "Content-Length":"39"
+        },
+        "metadata":{
+            "Content-Type":"application/json; charset=UTF-8"
+        },
+        "media":{
+            "Content-Type":"text/plain"
+        }
+    },
+    "body":{
+        "data":"--file-actions\nContent-Type: application/json; charset=UTF-8\n\n{\"name\": \"greetings.txt\"}\n\n--file-actions\nContent-Type: text/plain\n\nHello, world!\n\n\n--file-actions--"
+    },
+    "full_url":"https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart"
+}
+```
+
+The body request can be quite lengthy sometimes depending on the size of your file.
+
+The headers of the return is divided in three layers the `top-level`, `metadata`, and `media`, it describes which headers was used to create the requests, sometimes could be useful to know.
+
+### Update class
+The update class inherits the upload class but the only different thing is that one use the PUT method instead of POST.
