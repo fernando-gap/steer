@@ -105,7 +105,7 @@ class Upload:
         if file != None and metadata != None:
 
             # multipart request both sizes of metadata and media
-            headers = headers_type.header(file, Update._ext(self, file) ,metadata)
+            headers = headers_type.header(file, self._ext(file), metadata)
 
             request.update({
                 'headers': headers

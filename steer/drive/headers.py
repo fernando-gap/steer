@@ -211,7 +211,6 @@ class _Multipart(_Header):
 
         The metadata is required and cannot be sent without the file.
         """
-
         self.add_header(
            'Content-Type', 
            f'multipart/related; boundary={self.boundary}'
