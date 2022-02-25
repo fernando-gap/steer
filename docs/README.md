@@ -10,7 +10,7 @@ This document list all API reference and guide you on how to use Steer. To follo
 Steer is a URL creator for OAuth2 and Drive for Google APIs as mentioned [here](https://github.com/fernando-gap/steer#steer). What Steer **does not** actually do is make a **HTTP request**, and create other types of OAuth2 URLs other than *Desktop & Mobile Apps*.
 
 # Packages
-The Steer API has two packages oauth and drive which provides useful modules to handle Google API URLs.
+The Steer API has two packages oauth and drive which provides useful modules to create Google API URLs.
 
 To import the main packages:
 ```python
@@ -78,8 +78,6 @@ auth = OAuth2(client_id="your_client_id",
               )
 ```
 
-The application example uses the `config.json` as configuration. 
-
 ## OAuth2 Methods
 ### OAuth2.create(challenge=None)
 The `create` method is the **first** thing you invoke if you want to authenticate the user, it creates the OAuth2 URL for your application. The method can optionally uses a `code_challenge`. The method return the respective URL if you want to store in a variable.
@@ -88,7 +86,7 @@ Arguments:
 - challenge - The challenge is a `code_challenge` created for every request, and sent to the authorization url to get the access token.
 
 #### Example
-The first thing in our example app is to add the OAuth2 authentication and create an OAuth2 URL.
+Create an OAuth2 instance and create the OAuth2 URL.
 
 ```python
 # app.py
@@ -101,8 +99,6 @@ oauth.create()
 ### OAuth2.open()
 Google does not let you open the request using a *http client*. The method opens the default user's browser to start the OAuth2 request, the only part of steer that *actually* sends a *request*.
 
-#### Example
-Open the default browser of the client in our example.
 ```python
 oauth.open()
 ```
@@ -114,21 +110,29 @@ The user should authorize the application to access its drive to tell Google to 
 The code received is needed to use in the code exchange which is the second needed thing to do to get the access token.
 
 Arguments:
-- code - The code is given by Google after the user gives access to the application
+- code - The code is given by Google after the user passes the consent screen
 - secret - the client_secret (optional if you use in 'config.json')
 
 #### Example
-To exchange the code for an `access_token` and a `refresh_token`
+To create a code exchange URL.
 ```python
 code_url = oauth.accesstoken(code)
 ```
 
-After the code exchange is ready it is necessary to create a `POST` request to obtain the `access_token` and `refresh_token`.
-At the end of our example file put this.
-```python
-import requests
+### OAuth2.revokeaccess(\*\*token)
+To revoke the access rights of your application.
 
-response = requests.post(code_url)
-tokens = response.json()
+Arguments:
+tokens: it is dictionary which you can pass either a `refresh_token` or an `access_token` values to revoke.
+
+```python
+OAuth.rovokeaccess(access_token='access_token')
 ```
-The `tokens` is a response in json format including the `access_token`, `refresh_token`, and `expires_in` properties.
+
+### OAuth2.refreshtokens(refresh_token,  secret='')
+
+The refresh tokens avoids the user see the oauth consent screen of Google everytime the needs an access to the Google APIs. The method creates a refresh token URL.
+
+Arguments:
+- refresh_token - User's refresh_token
+- secret - client_secret (optional)
