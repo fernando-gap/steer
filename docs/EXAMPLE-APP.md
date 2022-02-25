@@ -108,7 +108,7 @@ def check_dir(data):
         tokens_save.write(data)
 ```
 
-The tokens were saved at `./.steer/tokens.json` in the current directory. The variable `tokens` store the response from Google as `json` and return it.
+The tokens were saved at `./.steer/tokens.json` in the current directory. The variable `tokens` store the response from Google as `json`, and returns it.
 
 ```python
 import requests
@@ -192,3 +192,38 @@ See if the runtime succeeds:
 $ cat .steer/tokens.json
 ```
 It should list a json file with contents, otherwise a status code error.
+
+## Refreshing the Access token
+
+This next step may can change a little bit our `app.py`, because we need to check whether the refresh token is expired each time the user runs the app.
+
+The code loads the data from `tokens.json`, makes a `POST` request to get the new access tokens, and update the file at `.steer/tokens.json` with the new ones.
+
+```python
+import json
+
+def refresh(oauth):
+    data = json.loads(open('./.steer/tokens.json').read())
+    token = oauth.refreshtoken(data['refresh_token'])
+
+    tokens_new = requests.post(token)
+    check_dir(tokens_new)
+```
+The function refresh a token each time is called, which is bad, it is needed that the function only request a new token when the other one is *expired*.
+```python
+import json
+
+def refresh(oauth, is_expired):
+    if is_expired:
+        data = json.loads(open('./.steer/tokens.json').read())
+        token = oauth.refreshtoken(data['refresh_token'])
+    else:
+        return False
+
+    tokens_new = requests.post(token)
+    check_dir(tokens_new)
+    create_expires_date(tokens_new.json())
+    return True
+
+```
+This modification returns false or true depending whether the token is expired. As you noticed the application requires a `is_expired` argument which will be covered below.
