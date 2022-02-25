@@ -177,6 +177,7 @@ if __name__ == '__main__':
 ```
 At this stage the server should look as above.
 
+### Testing
 To execute the program run the following, remember that you need to login as a test user or a user depending on your Google project.
 
 ```
@@ -226,4 +227,62 @@ def refresh(oauth, is_expired):
     return True
 
 ```
-This modification returns false or true depending whether the token is expired. As you noticed the application requires a `is_expired` argument which will be covered below.
+This modification returns either false or true depending whether the token is expired. As you noticed the function `refresh` requires a `is_expired` argument which will be covered below.
+
+## Handle Response Code
+How to know if the access token is expired? A new module is introduced that is the `OAuth2Response` Class which you can check if a token was expired. 
+
+The interesting thing is that it provides a method that checks if a token was expired, it provides the `before_expires` attribute that is when the instance was created.
+
+With this in mind it is possible do the following:
+```python
+from steer.oauth.response import OAuth2Response
+
+def create_expires_date(tokens):
+    tokens_new = OAuth2Response(tokens)
+
+    with open('.steer/expires_token_date.txt', 'w') as expires:
+        expires.write(str(response.before_expires))
+```
+This saves the date when the token was issued by the exchange code response.
+
+The next thing is to verify if the token is *actually* expired, it should returns True or False. If the files necessary does not exist the function returns false, meaning that the user does not have an access token.
+
+```python
+from datetime import, datetime
+def is_token_expired():
+    if (os.path.exists('.steer/tokens.json') and 
+        os.path.exists('.steer/expires_token_date.txt')):
+
+        with open('.steer/tokens.json', 'r') as tokens_old:
+            tokens = tokens_old.read()
+
+        with open('.steer/expires_token_date.txt') as before:
+            expires = datetime.fromisoformat(before.read())
+
+    else:
+        return False
+
+    date = OAuth2Response(tokens)
+    date.before_expires = expires
+
+    return date.is_expired()
+```
+
+To apply these functions in our app is to put the `create_expires_date` inside the `step_two` function (i. e. at the end), and `refresh`, which arguments is the return of `is_token_expired` function, before the `step_one` as follows:
+```python
+def step_two(url):
+    response = requests.post(url)
+    check_dir(response.text)
+    tokens = response.json()
+    create_expires_date(tokens) # here
+    return tokens
+
+
+if __name__ == '__main__':
+    refresh(oauth, is_token_expired()) # here
+    step_one(oauth)
+    asyncio.run(server(oauth))
+    step_two(code_url)
+```
+To test the app follow these steps as mentioned [here](#testing)
