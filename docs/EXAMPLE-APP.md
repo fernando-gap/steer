@@ -210,24 +210,23 @@ def refresh(oauth):
     tokens_new = requests.post(token)
     check_dir(tokens_new)
 ```
-The function refresh a token each time is called, which is bad, it is needed that the function only request a new token when the other one is *expired*.
+The function refresh a token each time is called, which is bad, it is needed that the function only request a new token when the other one is *expired* and when the tokens *actually* has a refresh token, which is issued when the user makes its **first** authentication.
+
 ```python
 import json
 
 def refresh(oauth, is_expired):
-    if is_expired:
-        data = json.loads(open('./.steer/tokens.json').read())
+    data = json.loads(open('./.steer/tokens.json').read())
+    if 'refresh_token' in date and is_expired:
         token = oauth.refreshtoken(data['refresh_token'])
+        tokens_new = requests.post(token)
+        check_dir(tokens_new)
+        create_expires_date(tokens_new.json())
+        return True
     else:
         return False
-
-    tokens_new = requests.post(token)
-    check_dir(tokens_new)
-    create_expires_date(tokens_new.json())
-    return True
-
 ```
-This modification returns either false or true depending whether the token is expired. As you noticed the function `refresh` requires a `is_expired` argument which will be covered below.
+This modification returns either false or true depending whether the token is expired and has a `refresh_token` to renew. As you noticed the function `refresh` requires a `is_expired` argument which will be covered below.
 
 ## Handle Response Code
 How to know if the access token is expired? A new module is introduced that is the `OAuth2Response` Class which you can check if a token was expired. 
@@ -246,7 +245,7 @@ def create_expires_date(tokens):
 ```
 This saves the date when the token was issued by the exchange code response.
 
-The next thing is to verify if the token is *actually* expired, it should returns True or False. If the files necessary does not exist the function returns false, meaning that the user does not have an access token.
+The next thing is to verify if the token is in fact expired, it should returns True or False. If the files necessary does not exist the function returns false, meaning that the user does not have an access token.
 
 ```python
 from datetime import, datetime
@@ -255,7 +254,7 @@ def is_token_expired():
         os.path.exists('.steer/expires_token_date.txt')):
 
         with open('.steer/tokens.json', 'r') as tokens_old:
-            tokens = tokens_old.read()
+            tokens = json.loads(tokens_old.read())
 
         with open('.steer/expires_token_date.txt') as before:
             expires = datetime.fromisoformat(before.read())
@@ -269,7 +268,7 @@ def is_token_expired():
     return date.is_expired()
 ```
 
-To apply these functions in our app is to put the `create_expires_date` inside the `step_two` function (i. e. at the end), and `refresh`, which arguments is the return of `is_token_expired` function, before the `step_one` as follows:
+To apply these functions in our app put the `create_expires_date` inside the `step_two` function (i. e. at the end), and `refresh`, which arguments is the return of `is_token_expired`, before the `step_one` as follows:
 ```python
 def step_two(url):
     response = requests.post(url)
@@ -285,4 +284,37 @@ if __name__ == '__main__':
     asyncio.run(server(oauth))
     step_two(code_url)
 ```
-To test the app follow these steps as mentioned [here](#testing)
+To test the app follow these steps as mentioned [here](#testing) You can try to modify the files inside `.steer` to see what happens.
+
+## Revoke the app access
+Apps can access the user's drive when using the API, but applications can also revoke the access rights to stop using the user's drive. To revoke the access in our application is to pass a command line option `--revoke`.
+
+```python
+def revoke_access(oauth):
+    try:
+        with open('./.steer/tokens.json') as tokens:
+            token = json.loads(tokens.read())
+
+        deny = oauth.revokeaccess(access_token=token['access_token'])
+        requests.post(deny)
+        os._exit(0)
+    except FileNotFoundError:
+        return
+```
+
+The function `revoke_access` tries to open the `tokens.json` to read the access_token, this is needed to revoke the access rights, if no files found the function return `None` which means that the user still do not have an authentication.
+
+If the user has one, then the request is made to revoke the access, and the app closes.
+
+```python
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == '--revoke':
+        revoke_access(oauth)
+        
+    refresh(oauth, is_token_expired())
+    step_one(oauth)
+    asyncio.run(server(oauth))
+    step_two(code_url)
+```
+
+In the top of `main` it is checked whether the `sys.argv` is greater than one, and if the index one is equals to `--revoke` if it is the revoke is made, if not the lines below is executed.
