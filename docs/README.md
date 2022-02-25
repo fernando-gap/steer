@@ -103,11 +103,11 @@ Google does not let you open the request using a *http client*. The method opens
 oauth.open()
 ```
 
-The user should authorize the application to access its drive to tell Google to send the authorization code to our `Loopback IP address`.
+The user should authorize the application to access its drive to tell Google to send the authorization code to the `Loopback IP address`.
 
 <!-- OAuth2 package continuation -->
 ### OAuth2.accesstoken(code, secret=None)
-The code received is needed to use in the code exchange which is the second needed thing to do to get the access token.
+The code received is needed to use in the code exchange which is the second thing to do to get the access token.
 
 Arguments:
 - code - The code is given by Google after the user passes the consent screen
@@ -123,16 +123,22 @@ code_url = oauth.accesstoken(code)
 To revoke the access rights of your application.
 
 Arguments:
-tokens: it is dictionary which you can pass either a `refresh_token` or an `access_token` values to revoke.
+- tokens - it is a dictionary which you can pass either a `refresh_token` or an `access_token` values to revoke.
 
 ```python
-OAuth.rovokeaccess(access_token='access_token')
+oauth.rovokeaccess(access_token='access_token')
+# or
+oauth.rovokeaccess(refresh_token='refresh_token')
 ```
 
 ### OAuth2.refreshtokens(refresh_token,  secret='')
 
-The refresh tokens avoids the user see the oauth consent screen of Google everytime the needs an access to the Google APIs. The method creates a refresh token URL.
+The refresh tokens avoids the user see the oauth consent screen everytime it needs to access the user account. The method creates a refresh token URL.
 
 Arguments:
 - refresh_token - User's refresh_token
 - secret - client_secret (optional)
+
+```python
+oauth.refreshtokens('refresh_token')
+```
