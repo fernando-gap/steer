@@ -5,6 +5,23 @@ This document list all API reference and guide you on how to use Steer. To follo
 - [What is Steer](#what-is-steer)
 - [Packages](#packages)
 - [OAuth2](#oauth2)
+    - [OAuth2 Class](#oauth2-class)
+        - [create](#oauth2createchallengenone)
+        - [open](#oauth2open)
+        - [accesstoken](#oauth2accesstokencode-secretnone)
+        - [revokeaccess](#oauth2revokeaccesstoken)
+        - [refreshtokens](#oauth2refreshtokensrefresh_token--secret)
+    - [Challenge Class](#challenge-class)
+        - [Randstring](#randstring)
+        - [method](#randstring)
+        - [get_method](#get--method)
+    - [OAuth2Response Class](#oauth2response-class) 
+- [Drive](#drive)
+    - [The drive module](#the-drive-module)
+    - [Upload Class](#upload-class)
+        - [simple](#simple)
+        - [multipart](#multipart)
+    - [Update Class](#update-class)
 
 # What is Steer
 Steer is a URL creator for OAuth2 and Drive for Google APIs as mentioned [here](https://github.com/fernando-gap/steer#steer). What Steer **does not** actually do is make a **HTTP request**, and create other types of OAuth2 URLs other than *Desktop & Mobile Apps*.
@@ -33,7 +50,7 @@ The response module is to handle the response after the code exchange. It has tw
 # OAuth2
 The module of OAuth2 is where all the URL creation process happens. It should be enough to create an application.
 
-## OAuth2 class
+## OAuth2 Class
 Before dive in the OAuth2 is necessary to understand how google uses it, and which type of fields is needed to create the OAuth2 URL. The following fields of authentication is noticeable:
 
 - client_id
