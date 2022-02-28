@@ -1,4 +1,8 @@
 # Steer
+<a href="https://github.com/fernando-gap/steer/blob/main/README.md">
+  <img src="https://img.shields.io/badge/lang-en-red">
+</a>
+
 OAuth2 e Google Drive "upload" de um modo simples. A API Steer cria todas as URLs necessárias para a autenticação na API do Google. Além disso, Steer oferece a possibilidade de criar URLs para enviar arquivos ao Google Drive, steer traz dois tipos de envio de arquivos "simple" e "multipart".
 
 ## Instalação

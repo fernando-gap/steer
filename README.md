@@ -1,4 +1,9 @@
 # Steer
+<a href="https://github.com/fernando-gap/steer/blob/main/README.pt-br.md">
+  <img src="https://img.shields.io/badge/lang-pt--br-green">
+</a>
+
+
 <!-- Description -->
 The OAuth2 and Google Drive media upload made simple. The Steer API creates all the necessary OAuth2 URLs to authenticate in Google API. Steer also offers the possibility to create media upload URLs in Google Drive API that offers two types of media upload: simple and multipart.
 
