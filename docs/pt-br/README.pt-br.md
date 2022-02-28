@@ -2,23 +2,23 @@
 Este documento lista todas as funcionalidades e usos da API Steer. Para criar seu primeiro aplicativo feito com Steer clica [aqui](https://github.com/fernando-gap/steer/blob/main/docs/pt-br/EXAMPLE-APP.pt-br.md).
 
 # Índice
-- [O que é Steer](#what-is-steer)
-- [Pacotes](#packages)
+- [O que é Steer](#o-que-é-steer)
+- [Pacotes](#pacotes)
 - [OAuth2](#oauth2)
-    - [Classe OAuth2](#oauth2-class)
+    - [Classe OAuth2](#classe-oauth2)
         - [create](#oauth2createchallengenone)
         - [open](#oauth2open)
         - [accesstoken](#oauth2accesstokencode-secretnone)
         - [revokeaccess](#oauth2revokeaccesstoken)
         - [refreshtokens](#oauth2refreshtokensrefresh_token--secret)
-    - [Classe Challenge](#challenge-class)
-    - [Class OAuth2Response](#oauth2response-class) 
+    - [Módulo Challenge](#módulo-challenge)
+    - [Classe OAuth2Response](#classe-oauth2response) 
 - [Drive](#drive)
-    - [Class Upload](#upload-class)
-        - [simple](#simple)
-        - [multipart](#multipart)
+    - [Classe Upload](#classe-upload)
+        - [simple](#uploadsimplemedia--none)
+        - [multipart](#uploadmultipartfile--none-metadata--none)
 
-
+# O que é Steer
 Steer cria URL para facilitar a autenticação e manipulação de "uploads" no Drive. Steer *não faz* pedidos HTTP, Steer não consegueu fazer outros tipos de URL que não seja *Desktop & Mobile*.
 
 # Pacotes
