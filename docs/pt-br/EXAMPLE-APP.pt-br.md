@@ -1,4 +1,7 @@
 # Exemplo
+<a href="https://github.com/fernando-gap/steer/blob/main/docs/EXAMPLE-APP.md">
+  <img src="https://img.shields.io/badge/lang-en-red">
+</a>
 
 ## Sobre o tutorial
 O tutorial é uma passagem através das classes e métodos, que irão ser explicados de uma **forma interativa** que se pode seguir. No final deste guia um aplicativo será construido com a API Steer. A documentação da API pode ser encontrada [aqui](https://github.com/fernando-gap/steer/blob/main/docs/pt-br/README.pt-br.md).
