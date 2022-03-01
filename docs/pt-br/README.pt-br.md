@@ -1,5 +1,5 @@
 # Documentação
-<a href="https://github.com/fernando-gap/steer/blob/main/README.pt-br.md">
+<a href="https://github.com/fernando-gap/steer/blob/main/docs/README.md">
   <img src="https://img.shields.io/badge/lang-en-red">
 </a>
 
