@@ -1,4 +1,8 @@
 # Reference
+<a href="https://github.com/fernando-gap/steer/blob/main/docs/pt-br/README.pt-br.md">
+  <img src="https://img.shields.io/badge/lang-pt--br-green">
+</a>
+
 This document list all API reference and guide you on how to use Steer. To follow the guide to create your first app click [here](https://github.com/fernando-gap/steer/blob/main/docs/EXAMPLE-APP.md).
 
 # Contents
@@ -15,8 +19,8 @@ This document list all API reference and guide you on how to use Steer. To follo
     - [OAuth2Response Class](#oauth2response-class) 
 - [Drive](#drive)
     - [Upload Class](#upload-class)
-        - [simple](#simple)
-        - [multipart](#multipart)
+        - [simple](#uploadsimplemedia--none)
+        - [multipart](#uploadmultipartfile--none-metadata--none)
 
 # What is Steer
 Steer is a URL creator for OAuth2 and Drive for Google APIs as mentioned [here](https://github.com/fernando-gap/steer#steer). What Steer **does not** actually do is make a **HTTP request**, and create other types of OAuth2 URLs other than *Desktop & Mobile Apps*.
