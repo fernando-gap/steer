@@ -1,4 +1,8 @@
 # Documentação
+<a href="https://github.com/fernando-gap/steer/blob/main/README.pt-br.md">
+  <img src="https://img.shields.io/badge/lang-en-red">
+</a>
+
 Este documento lista todas as funcionalidades e usos da API Steer. Para criar seu primeiro aplicativo feito com Steer clica [aqui](https://github.com/fernando-gap/steer/blob/main/docs/pt-br/EXAMPLE-APP.pt-br.md).
 
 # Índice
