@@ -6,17 +6,17 @@ O tutorial é uma passagem através das classes e métodos, que irão ser explic
 
 ## Índice
 
-- [Dependencies](#dependencies)
-- [The Application](#the-application)
-- [Create an OAuth2 URL](#create-an-oauth2-url)
-- [Open User's Default Browser](#open-users-default-browser)
-- [Create the Loopback IP Address](#create-the-loopback-ip-address)
+- [Dependências](#dependencies)
+- [A aplicação](#a-aplicação)
+- [Criando a OAuth2 URL](#criando-a-oauth2-url)
+- [Abra o Navegador do Usuário](#abra-o-navegador-do-usuário)
+- [Como criar o Loopback IP Address](#como-criar-o-loopback-ip-address)
 - [Code Exchange](#code-exchange)
-- [Testing](#testing)
-- [Refreshing the Access Token](#refreshing-the-access-token)
-- [Handle Response Code](#handle-response-code)
-- [Revoking the App Access](#revoking-the-app-access)
-- [Creating a File to Upload in user's Drive](#creating-a-file-to-upload-in-users-drive)
+- [Teste a Aplicação](#teste-a-aplicação)
+- [Renovando o access_token](#renovando-o-access_token)
+- [Resposta do Google](#resposta-do-google)
+- [Revogando o Acesso da Aplicação](#revogando-o-acesso-da-aplicação)
+- [Fazendo o upload no Drive](#fazendo-o-upload-no-drive)
 
 ## Dependências
 É assumido que *pip* e *python* já estão instalados, se não instale-as e volte depois :). Faça o seguinte para instalar flask e requests:
@@ -209,7 +209,7 @@ $ cat .steer/tokens.json
 É esperado dados em formato json sem estar vazio ou com erro.
 
 
-## Refrescando o access_token
+## Renovando o access_token
 O proximo passo talvez modifique um pouco `app.py` porque é preciso verificar se o token foi expirado toda vez que o aplicativo roda, pois evita o usuário se autenticar novamente. 
 
 A primeira vez que `has_refresh` é invocado, a função tenta ler os dados de `tokens.json`, se o arquivo não é encontrado um erro é lançado e falso é retornado, isso mostra que o usuário ainda não emitiu uma autenticação.
@@ -348,6 +348,7 @@ if __name__ == '__main__':
 
 No topo de "main" é checado se `sys.argv` é maior do que um e se o índice um é igual a `--revoke`.
 
+## Fazendo o upload no Drive
 A função `step_three` faz o upload de um arquivo no Google Drive do usuário.
 ```python
 def step_three(token, metadata, file):
