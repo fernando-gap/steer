@@ -1,4 +1,8 @@
 # Example
+<a href="https://github.com/fernando-gap/steer/blob/main/docs/pt-br/EXAMPLE-APP.pt-br.md">
+  <img src="https://img.shields.io/badge/lang-pt--br-green">
+</a>
+
 ## The Guide
 This is a guide throughout the api reference where each method and class will be explained and used in a ***interactive way*** that you can follow, and in the end you will have an app built with the Steer API. To see the API reference click [here](https://github.com/fernando-gap/steer/blob/main/docs/README.md).
 
