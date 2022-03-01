@@ -1,7 +1,7 @@
 # Exemplo
 
 ## Sobre o tutorial
-O tutorial é uma passagem através das classes e métodos, que irão ser explicados de uma **forma interativa** que se pode seguir. No final deste guia terá um aplicativo construido com a API Steer. A documentação da API pode ser encontrada [aqui](https://github.com/fernando-gap/steer/blob/main/docs/README.md).
+O tutorial é uma passagem através das classes e métodos, que irão ser explicados de uma **forma interativa** que se pode seguir. No final deste guia um aplicativo será construido com a API Steer. A documentação da API pode ser encontrada [aqui](https://github.com/fernando-gap/steer/blob/main/docs/pt-br/README.pt-br.md).
 
 
 ## Índice
@@ -19,7 +19,7 @@ O tutorial é uma passagem através das classes e métodos, que irão ser explic
 - [Creating a File to Upload in user's Drive](#creating-a-file-to-upload-in-users-drive)
 
 ## Dependências
-É assumido que *pip* e *python* já estão instaladas, se não instale-as e volte depois :). Faça o seguinte para instalar flask e requests:
+É assumido que *pip* e *python* já estão instalados, se não instale-as e volte depois :). Faça o seguinte para instalar flask e requests:
 
 ```
 $ pip install flask
@@ -29,11 +29,11 @@ $ pip install requests
 ## A aplicação
 O objetivo da aplicação é simples: toda vez que o usuário executa o app um arquivo é escrito em seu Drive, o usuário pode revogar o acesso e a aplicação pode refrescar a chave, que faz com que o usuário não faça a autenticação novamente. Steer não faz o pedido HTTP, por essa razão é necessário implementar.
 
-O exemplo é usado dentro de um Google project, e é deduzido que tenha as chaves de acesso para começar.
+O exemplo é usado dentro de um "Google project" é deduzido que as chaves de acesso já existam.
 
 ## Criando a OAuth2 URL
 
-A primeira coisa de nosso exemplo é criar a URL OAuth2
+A primeira coisa de nosso exemplo é criar a URL OAuth2.
 ```python
 # app.py
 from steer.oauth.api import OAuth2
@@ -44,7 +44,7 @@ def step_one(oauth):
     oauth.create()
 ```
 
-A arquivo `config.json` contém as seguintes propriedades:
+O arquivo `config.json` contém as seguintes propriedades:
 ```json
 {
     "client_id": "your_client_id",
@@ -56,7 +56,7 @@ A arquivo `config.json` contém as seguintes propriedades:
 ```
 
 
-## Abra o Navegador Padrão do Usuário
+## Abra o Navegador do Usuário
 A função `step_one` está *embrulhando* a criação da URL para utilizar depois. 
 O argumento `oauth` é uma instancia de `OAuth2`.
 
@@ -65,12 +65,12 @@ def step_one(oauth):
     oauth.create()
     oauth.open()
 ```
-O usuário deve autorizar a aplicação para acessar o Drive e dizer ao Google Server enviar a chave para o `Loopback IP address`
+O usuário deve autorizar a aplicação para acessar o Drive e dizer ao Google para enviar a chave no `Loopback IP address`
 
 ## Como Criar o Loopback IP Address
-A `redirect_uri` é o método em que o Google deve usar para enviar o código de autorização. Neste caso é o endereço de um server local.
+A `redirect_uri` é o método em que o Google deve usar para enviar o código de autorização. Neste caso é o endereço de um servidor local.
 
-A implementação deste server é uma simples instancia do framework Flasku usada com uma função de co-rotina, que faz com que o server desligue para executar outras funções.
+A implementação deste servidor é uma simples instancia do framework Flask usada com uma função de co-rotina, que faz com que o servidor desliga para executar outras funções.
 
 ```python
 from flask import Flask, request, redirect
@@ -107,7 +107,7 @@ Nesta fase o arquivo `app.py` deve se paracer como o de cima. Os três pontos no
 A primeira coisa adicionada foi a URL OAuth2. A segunda é um servidor implementado em Flask em que uma co-rotina espera um pedido do Google ser feito para armazenar o `code`.
 
 ## Code Exchange
-O passo dois é a fase de code exchange que faz a troca de chaves por uma que pode ser usada pela a aplicação. 
+O passo dois é a fase de code exchange que faz a troca de chaves por uma que pode ser usada pela aplicação. 
 
 A função`check_dir` cria uma pasta em `.steer/` em que os dados sobre as chaves são armazenadas e salvas em `.steer/tokens.json`. Se o arquivo já existe ele é atualizado.
 
@@ -121,7 +121,9 @@ def check_dir(data):
         tokens_save.write(data)
 ```
 
-A função `step_two` cria um pedido HTTP `POST` para a fase de code exchange. A variável `tokens` armazena a resposta do Google como `json` e é retornado.
+A função `step_two` cria um pedido HTTP `POST` para a fase de code exchange. A variável `tokens` armazena a resposta e retorna do Google como `json`.
+
+
 ```python
 # ...
 import requests
@@ -198,7 +200,7 @@ Para testar a aplicação execute os seguintes comandos, lembre-se que é precis
 $ python app.py
 ```
 
-Irá abrir seu navegador padrão e perceberá a tela de login do Google, chamada de "content screen".
+Irá abrir seu navegador padrão e a tela de login do Google será mostrada, chamada de "content screen".
 
 Veja se a aplicação fez o que devia.
 ```
@@ -264,7 +266,7 @@ def create_expires_date(tokens):
 ```
 Isto salva a data de quando o token foi emitido pela fase de code exchange.
 
-A proxima coisa a se fazer é verifica se o token está de fato expirado, deve-se retornar falso ou verdadeiro. Se a pasta ou os arquivos não existir, isso significa que o usuário não tem um `access_token`.
+A proxima coisa a se fazer é verificar se o token está de fato expirado, deve-se retornar falso ou verdadeiro. Se a pasta ou os arquivos não existir, isso significa que o usuário não tem um `access_token`.
 
 ```python
 from datetime import, datetime
@@ -287,7 +289,7 @@ def is_token_expired():
     return date.is_expired()
 ```
 
-Para aplicar estas funções em nosso app coloque a função `create_expires_date` dentro da função (no final) `step_two` e `has_refresh` que verifica os  `refresh_tokens` no começo do "main".
+Para aplicar estas funções em nosso app coloque a função `create_expires_date` dentro da função (no final) `step_two` e `has_refresh` que verifica os  `refresh_tokens` no começo do "main". Como mostrado abaixo.
 
 
 
@@ -307,7 +309,7 @@ if __name__ == '__main__':
         asyncio.run(server(oauth))
         token = step_two(code_url)
 ```
-Para testar o app siga as instruções como mencionados [aqui](#teste-a-aplicação)
+Para testar o app siga as instruções como mencionados [aqui](#teste-a-aplicação).
 
 ## Revogando o acesso da aplicação
 Para revogar o acesso da aplicação no Drive do usuário, deve-se passar a opção `--revoke` como argumento na command-line, que irá remover a pasta `./steer` e seus conteúdos.
@@ -329,7 +331,7 @@ def revoke_access(oauth):
         print('There is nothing to do...')
         os._exit(0)
 ```
-Se o usuário a pasta estiver vazia ou não conter os dados necessários o applicativo finaliza o programa.
+Se a pasta estiver vazia ou não conter os dados necessários o applicativo finaliza o programa.
 
 ```python
 import sys
@@ -384,6 +386,6 @@ if __name__ == '__main__':
     step_three(token['access_token'], {"name": "greetings.txt"}, 'greetings.txt')
 ```
 
-A variável `token` armazena os tokens atuais em que podem ser um novo ou antigo, que está no arquivo `tokens.json`.
+A variável `token` armazena os tokens atuais em que podem ser um novo ou antigo que está no arquivo `tokens.json`.
 
 Este é o fim de nosso exemplo, lembre-se que a documentação pode ser encontrada [aqui](https://github.com/fernando-gap/steer/blob/main/docs/pt-br/README.pt-br.md).
